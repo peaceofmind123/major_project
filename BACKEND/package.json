@@ -1,0 +1,33 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "the backend of the major project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "set DEBUG=index && nodemon index"
+  },
+  "author": "ashishthesatan",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "1.18.3",
+    "bootstrap": "4.3.1",
+    "cookie-parser": "1.4.4",
+    "debug": "4.1.1",
+    "express": "4.16.4",
+    "express-handlebars": "3.0.2",
+    "express-session": "1.16.1",
+    "jquery": "3.4.0",
+    "morgan": "1.9.1",
+    "nodemon": "1.18.11"
+  },
+  "nodemonConfig": {
+    "restartable": "rs",
+    "ignore": "node_modules/**/node_modules",
+    "delay": 2500,
+    "env": {
+      "PORT": 8000,
+      "NODE_ENV": "development"
+    }
+  }
+}
