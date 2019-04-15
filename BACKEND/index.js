@@ -28,7 +28,7 @@ app.get('/',(req,res)=>{
     
 });
 app.get('/assets/video',(req,res)=>{
-  const path = 'assets/video.mkv';
+  const path = 'assets/video.mp4';
   const stat = fs.statSync(path);
   const fileSize = stat.size;
   const range = req.headers.range;
