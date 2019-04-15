@@ -8,9 +8,11 @@ const session = require('express-session');
 const handleBars = require('express-handlebars');
 const morgan = require('morgan');
 const fs = require('fs');
-app.engine('handlebars',handleBars({defaultLayout:'main'}));
+const path = require('path');
+app.engine('handlebars',handleBars({defaultLayout:'main',layoutsDir:path.join(__dirname,'BACKEND','views','layouts')}));
 app.set('view engine','handlebars');
-app.use(express.static('public'));
+app.set('views',path.join(__dirname,'BACKEND','views'));
+app.use(express.static(path.join(__dirname,'BACKEND','public')));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -23,13 +25,13 @@ app.use(morgan('tiny'));
 
 
 app.get('/',(req,res)=>{
-    console.log('request recieved!!');
+    
     res.render('home');
     
 });
 app.get('/assets/video',(req,res)=>{
-  const path = 'assets/video.mp4';
-  const stat = fs.statSync(path);
+  const videoPath = path.join(__dirname,'BACKEND','assets','video.mp4');
+  const stat = fs.statSync(videoPath);
   const fileSize = stat.size;
   const range = req.headers.range;
   if (range) {
@@ -39,7 +41,7 @@ app.get('/assets/video',(req,res)=>{
       ? parseInt(parts[1], 10)
       : fileSize-1;
     const chunksize = (end-start)+1;
-    const file = fs.createReadStream(path, {start, end});
+    const file = fs.createReadStream(videoPath, {start, end});
     const head = {
       'Content-Range': `bytes ${start}-${end}/${fileSize}`,
       'Accept-Ranges': 'bytes',
@@ -54,7 +56,7 @@ app.get('/assets/video',(req,res)=>{
       'Content-Type': 'video/mp4',
     };
     res.writeHead(200, head);
-    fs.createReadStream(path).pipe(res);
+    fs.createReadStream(videoPath).pipe(res);
   }
 });
 //404 handler
