@@ -1,20 +1,81 @@
+<link rel="stylesheet" href="/css/home.css">
 <div class="container-fluid">
-    <div class="col-md-8 col-sm-12">
-        <div class="card text-center">
-            <div class="card-header">
-                Live Feed <small>&#x1f534;</small>
-            </div>
-            <div class="card-body">
-                
-                <video class="w-100 h-100" src="/assets/video" id="main_video" autoplay controls>
+    <div class="row" id="firstRow">
+        <div class="col-md-8 col-sm-12">
+            <div class="card text-center">
+                <div class="card-header">
+                    Live Feed <small>&#x1f534;</small>
+                </div>
+                <div class="card-body">
                     
-                </video>
+                    <video class="w-100 h-100" src="/assets/video" id="main_video" autoplay controls>
+                        
+                    </video>
+                </div>
+                
             </div>
-            
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <div class="card text-center">
+                <div class="card-header">
+                Current Vehicles   
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>S.N.</th>
+                                <th>Vehicle Type</th>
+                                <th>Vehicle ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each currentRows}}
+                            <tr>
+                                {{#each this}}
+                                    <td>{{this}}</td>
+                                {{/each}}
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card text-center mt-5">
+                <div class="card-header">
+                    Suspicious Vehicles (past 24 hrs)
+                </div>
+                <div class="card-body">
+                    <table class="table table-responsive table-striped table-hover table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>S.N.</th>
+                                <th>Vehicle ID</th>
+                                <th>Type</th>
+                                <th>Color</th>
+                                <th>Found in database?</th>
+                                <th>Alert Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each rowsDay}}
+                            <tr>
+                                {{#each this}}
+                                    <td{{#ifequals this "High"}}
+                                        class="text-danger"
+                                        {{/ifequals}}
+                                        {{#ifequals this "Medium"}}
+                                        class="text-warning"
+                                        {{/ifequals}}>{{this}}</td>
+                                {{/each}}
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-6 col-sm-12">
-        
-    </div>
+    
 </div>
 <script src="/js/home.js"></script>

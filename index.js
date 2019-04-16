@@ -9,7 +9,16 @@ const handleBars = require('express-handlebars');
 const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
-app.engine('handlebars',handleBars({defaultLayout:'main',layoutsDir:path.join(__dirname,'BACKEND','views','layouts')}));
+app.engine('handlebars',handleBars({defaultLayout:'main',
+                                    layoutsDir:path.join(__dirname,'BACKEND','views','layouts'),
+                                    helpers:{
+                                      ifequals: function(obj1, obj2,options) {
+                                        if(obj1==obj2)
+                                          return options.fn(this);
+                                        else
+                                          return options.inverse(this); 
+                                      }
+                                    }}));
 app.set('view engine','handlebars');
 app.set('views',path.join(__dirname,'BACKEND','views'));
 app.use(express.static(path.join(__dirname,'BACKEND','public')));
@@ -25,8 +34,11 @@ app.use(morgan('tiny'));
 
 
 app.get('/',(req,res)=>{
-    
-    res.render('home');
+    let currentRows = [[1,"Car", "CL 201 534"],[2,"Car","DL 342 321"],[3, "Bus","Not detected"]];
+    let rowsDay = [[1, "CL 201 534", "Car", "Black", "Yes","High"],
+                   [2, "CD 231 564", "Bus", "White", "No","Medium"],
+                   [3, "MH 234 453","Car","Green","Yes","Low"]];
+    res.render('home',{currentRows:currentRows, rowsDay:rowsDay});
     
 });
 app.get('/assets/video',(req,res)=>{
