@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('major-project', 'postgres', 'baaghdactarjeevanraju', {
+const sequelize = new Sequelize('major-project', 'postgres', 'postgres', {
   host: 'localhost',
   dialect: 'postgres',
 
@@ -12,7 +12,7 @@ const sequelize = new Sequelize('major-project', 'postgres', 'baaghdactarjeevanr
 
 
   // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators
-  operatorsAliases: false
+  
 });
 
 

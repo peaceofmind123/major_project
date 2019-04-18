@@ -29,3 +29,4 @@ const InfractionRecord = db.define('infractionrecord',{
         type: Sequelize.STRING
     }
 });
+module.exports = InfractionRecord;

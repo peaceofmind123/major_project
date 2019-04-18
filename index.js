@@ -9,6 +9,7 @@ const handleBars = require('express-handlebars');
 const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
+const Model = require(path.join(__dirname,'BACKEND','models','Model'));
 app.engine('handlebars',handleBars({defaultLayout:'main',
                                     layoutsDir:path.join(__dirname,'BACKEND','views','layouts'),
                                     helpers:{
