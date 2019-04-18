@@ -12,11 +12,13 @@ const InfractionRecord = db.define('infractionrecord',{
         primaryKey:true
     },
     type: { //the type of infraction
-        type:Sequelize.STRING, //todo: to be replaced by enum
+        type:Sequelize.ENUM,
+        values:['lane infraction','accident','overspeeding','drunk driving','reckless driving'] //todo: to be replaced by enum
         
     },
     severity: {
-        type: Sequelize.STRING, //todo: to be replaced by enum
+        type: Sequelize.ENUM,
+        values:['mild','moderate','severe','fatal']
         
     },
     date: {

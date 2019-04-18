@@ -11,8 +11,13 @@ const Vehicle = db.define('vehicle',{
         type: Sequelize.STRING,
         unique: true
     },
-    color: Sequelize.STRING, //TODO: to be replaced by enum
-    typeofVehicle:Sequelize.STRING, //TODO: to be replaced by enum
+    color: {
+        type: Sequelize.ENUM,
+        values: ['black','blue','red','green','purple','yellow','brown','white']}, 
+    typeofVehicle:{
+        type:Sequelize.STRING,
+        values:['car','bus','truck','scooter','motorbike','scooter','moped','SUV','van']
+    }, 
     model: Sequelize.STRING,
     owner_ref: //the reference to the owner (User) of the vehicle 
     {
