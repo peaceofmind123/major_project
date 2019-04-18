@@ -16,7 +16,7 @@ const Vehicle = db.define('vehicle',{
         values: ['black','blue','red','green','purple','yellow','brown','white']}, 
     typeofVehicle:{
         type:Sequelize.STRING,
-        values:['car','bus','truck','scooter','motorbike','scooter','moped','SUV','van']
+        values:['car','bus','truck','scooter','motorbike','moped','SUV','van']
     }, 
     model: Sequelize.STRING,
     owner_ref: //the reference to the owner (User) of the vehicle 

@@ -1,3 +1,90 @@
+<script src="/js/data.js"></script>
 <div class="container">
-    
+   <div class="accordion" id="accordionExample">
+        <div class="card">
+            <div class="card-header text-center" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Add Vehicle
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body"> 
+                    <form>
+                        <div class="form-group">
+                            <label for="licenseNumberInput">License Number</label>
+                            <input type="text" class="form-control" id="licenseNumberInput" placeholder="Enter license Number">
+                        </div>
+                        <div class="form-group">
+                            <label for="colorInput">Color</label>
+                            <select name="colorInput" id="colorInput" class="form-control">
+                                <option value="black">Black</option>
+                                <option value="blue">Blue</option>
+                                <option value="green">Green</option>
+                                <option value="yellow">Yellow</option>
+                                <option value="red">Red</option>
+                                <option value="purple">Purple</option>
+                                <option value="brown">Brown</option>
+                                <option value="white">White</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vehicleTypeInput">Type of Vehicle</label>
+                            <select name="vehicleTypeInput" id="vehicleTypeInput" class="form-control">
+                                <option value="car">Car</option>
+                                <option value="bus">Bus</option>
+                                <option value="truck">Truck</option>
+                                <option value="scooter">Scooter</option>
+                                <option value="moped">Moped</option>
+                                <option value="motorbike">Motorbike</option>
+                                <option value="SUV">SUV</option>
+                                <option value="van">Van</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vehicleModelInput">Model of Vehicle</label>
+                            <input type="text" name="vehicleModelInput" id="vehicleModelInput" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="ownerInput">Owner</label>
+                            <input type="text" name="ownerInput" id="OwnerInput" placeholder="Search.." class="form-control">
+                            <div class="dropdown-menu" id="matchedOwners">
+                                
+                            </div>                            
+                        </div>                        
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header text-center" id="headingTwo">
+            <h2 class="mb-0">
+                <button class="btn collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Add Person
+                </button>
+            </h2>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+            <div class="card-body">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header text-center" id="headingThree">
+            <h2 class="mb-0">
+                <button class="btn collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Add Infraction Record
+                </button>
+            </h2>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+            <div class="card-body">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            </div>
+            </div>
+        </div>
+    </div>
 </div>
