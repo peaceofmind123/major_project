@@ -49,10 +49,12 @@
                         </div>
                         <div class="form-group">
                             <label for="ownerInput">Owner</label>
-                            <input type="text" name="ownerInput" id="OwnerInput" placeholder="Search.." class="form-control">
-                            <div class="dropdown-menu" id="matchedOwners">
-                                
-                            </div>                            
+                            <select name="ownerInput" id="ownerInput" class="form-control" style="width:100%">
+                                <option value="placeholder">Select Owner</option>
+                                {{#each user}}
+                                    <option value="{{this.id}}">{{this.name}} {{this.license_no}}</option>
+                                {{/each}}
+                            </select>                            
                         </div>                        
                     </form>
                 </div>
