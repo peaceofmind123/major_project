@@ -18,8 +18,8 @@ User.hasMany(InfractionRecord, {
     sourceKey:'id'
 })
 
-//to be applied only once... remove in production
-db.sync();
+//to be applied only if db definition is edited... remove in production
+//db.sync();
 module.exports = {
     User: User,
     Vehicle: Vehicle,

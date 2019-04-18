@@ -39,7 +39,7 @@ app.get('/',(req,res)=>{
     let rowsDay = [[1, "CL 201 534", "Car", "Black", "Yes","High"],
                    [2, "CD 231 564", "Bus", "White", "No","Medium"],
                    [3, "MH 234 453","Car","Green","Yes","Low"]];
-    res.render('home',{currentRows:currentRows, rowsDay:rowsDay});
+    res.render('home',{currentRows:currentRows, rowsDay:rowsDay,pageName:"home"});
     
 });
 app.get('/assets/video',(req,res)=>{

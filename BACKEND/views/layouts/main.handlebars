@@ -21,10 +21,15 @@
                 <span class="sr-only">(current)</span>
                 </a>
             </li>
-            
+            {{#ifequals pageName "home"}}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Add/Edit Data</a>
+                </li>
+            {{/ifequals}}
             </ul>
         </div>
         </div>
+        
     </nav>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
