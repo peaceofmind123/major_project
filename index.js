@@ -42,6 +42,10 @@ app.get('/',(req,res)=>{
     res.render('home',{currentRows:currentRows, rowsDay:rowsDay,pageName:"home"});
     
 });
+app.get('/data',(req,res)=>{
+  res.render('data',{pageName:'data'});
+});
+
 app.get('/assets/video',(req,res)=>{
   const videoPath = path.join(__dirname,'BACKEND','assets','video.mp4');
   const stat = fs.statSync(videoPath);
