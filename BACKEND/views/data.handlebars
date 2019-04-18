@@ -12,7 +12,7 @@
 
             <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div class="card-body"> 
-                    <form>
+                    <form method="POST" id="vehicleAddForm">
                         <div class="form-group">
                             <label for="licenseNumberInput">License Number</label>
                             <input type="text" class="form-control" id="licenseNumberInput" placeholder="Enter license Number">
@@ -55,7 +55,8 @@
                                     <option value="{{this.id}}">{{this.name}} {{this.license_no}}</option>
                                 {{/each}}
                             </select>                            
-                        </div>                        
+                        </div>
+                        <button class="btn btn-primary" id="vehicleDataSubmit">Submit</button>                        
                     </form>
                 </div>
             </div>
