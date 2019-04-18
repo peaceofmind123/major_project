@@ -10,13 +10,14 @@ $(document).ready(function(){
             type:'post',
             contentType:'application/x-www-form-urlencoded',
             success: function(data,textStatus,jqxhr){
-                $('#vehicleDataForm').trigger("reset");
+                $('#vehicleAddForm').trigger('reset');
+                console.log('success');
                 },
             error: function(jqxhr, textStatus,errorThrown) {
                     console.log(textStatus,errorThrown);
                 }
 
             });
-
+            
         });
     });

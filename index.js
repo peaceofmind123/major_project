@@ -45,7 +45,9 @@ app.get('/',(req,res)=>{
 app.get('/data',(req,res)=>{
   res.render('data',{pageName:'data'});
 });
-
+app.post('/api/addUser',(req,res)=>{
+  res.send(JSON.stringify({response:"Success!!"}));
+});
 app.get('/assets/video',(req,res)=>{
   const videoPath = path.join(__dirname,'BACKEND','assets','video.mp4');
   const stat = fs.statSync(videoPath);
