@@ -98,25 +98,51 @@ router.post('/addvehicle',(req,res)=>{
     res.status(400);
     res.send({response:'null license Number'});
   }
-  else if(!req.body.ownerInput || req.body.ownerInput=='INVALID')
+  else if(req.body.owner_ref==null || req.body.owner_ref=='INVALID')
   {
+      console.log(req.body.owner_ref);
     res.status(400);
     res.send({response:'null owner'});
   }
   else
   {
       try {
+            Model.User.findOne({
+                where: {
+                    id: req.body.owner_ref
+                }
+            }).then((user)=>{
+                Model.Vehicle.create({
+                    licensePlateNo: req.body.licensePlateNo,
+                    color: req.body.color,
+                    typeofVehicle: req.body.typeofVehicle,
+                    model: req.body.model
+                }).then((vehicle)=>{
+                    user.setVehicles([vehicle]);
+                    res.send({response:'success'});
+                });
+            });
+            
+            /*
             vehicle = Model.Vehicle.create(
                 {
                     licensePlateNo: req.body.licensePlateNo,
                     color: req.body.color,
                     typeofVehicle: req.body.typeofVehicle,
-                    model: req.body.model,
-                    owner_ref: req.body.owner_ref
+                    model: req.body.model
+                    
                 }
-            ).then((result)=>{
-                res.send({response:'success'});
+            ).then((vehicle)=>{
+                vehicle.setUser(Model.User.findOne({
+                    where: {
+                        id: req.body.owner_ref
+                    }
+                })).then((vehicle)=>{
+                    res.send({response:'success'});
+                });
+                
             });
+            */
       }
       catch(e) {
             res.status(400);

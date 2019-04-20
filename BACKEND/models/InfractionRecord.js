@@ -2,11 +2,7 @@ const db = require('./sequelize-db');
 const Sequelize = require('sequelize');
 
 const InfractionRecord = db.define('infractionrecord',{
-    user_ref: //the reference to the user that this record pertains to
-    {
-        type: Sequelize.BIGINT,
-        primaryKey:true 
-    },
+    
     id: { //the partial key: its own id
         type:Sequelize.BIGINT,
         primaryKey:true

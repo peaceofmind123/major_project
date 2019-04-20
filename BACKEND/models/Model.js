@@ -9,17 +9,12 @@ const InfractionRecord = require('./InfractionRecord');
 const Op = Sequelize.Op;
 
 //associations
-User.hasMany(Vehicle, {
-    foreignKey:'owner_ref',
-    sourceKey:'id'
-});
-User.hasMany(InfractionRecord, {
-    foreignKey: 'user_ref',
-    sourceKey:'id'
-})
+User.hasMany(Vehicle);
+Vehicle.belongsTo(User);
+User.hasMany(InfractionRecord);
 
 //to be applied only if db definition is edited... remove in production
-//db.sync();
+db.sync();
 module.exports = {
     User: User,
     Vehicle: Vehicle,

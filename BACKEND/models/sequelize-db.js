@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('major_project', 'ashishthesatan', 'BaaghDactarJeevanRaju', {
-  host: 'satandatabase.cvyl8dv21ihz.us-east-1.rds.amazonaws.com',
+const sequelize = new Sequelize('major-project', 'postgres', 'postgres', {
+  host: 'localhost',
   dialect: 'postgres',
   
   pool: {

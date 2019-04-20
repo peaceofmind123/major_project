@@ -18,12 +18,7 @@ const Vehicle = db.define('vehicle',{
         type:Sequelize.STRING,
         values:['car','bus','truck','scooter','motorbike','moped','SUV','van']
     }, 
-    model: Sequelize.STRING,
-    owner_ref: //the reference to the owner (User) of the vehicle 
-    {
-        type: Sequelize.BIGINT,
-        unique:true,
-        allowNull:false
-    }
+    model: Sequelize.STRING
+    
 });
 module.exports = Vehicle;
