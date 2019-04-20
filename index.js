@@ -1,16 +1,22 @@
-//TODO: refactor this server script
+//const declarations
+const PORT = process.env.PORT || 8000;
+
+//const imports
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 8000;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const debug = require('debug');
 const session = require('express-session');
 const handleBars = require('express-handlebars');
 const morgan = require('morgan');
-const fs = require('fs');
+
 const path = require('path');
-const Model = require(path.join(__dirname,'BACKEND','models','Model'));
+
+const frontendRouter = require('./FRONTEND/router');
+const backendRouter = require('./BACKEND/router');
+
+//application setup
 app.engine('handlebars',handleBars({defaultLayout:'main',
                                     layoutsDir:path.join(__dirname,'BACKEND','views','layouts'),
                                     helpers:{
@@ -33,70 +39,9 @@ app.use(session({
     resave:true
 }));
 app.use(morgan('tiny'));
+app.use('/api',backendRouter);
+app.use('/',frontendRouter);
 
-
-app.get('/',(req,res)=>{
-    let currentRows = [[1,"Car", "CL 201 534"],[2,"Car","DL 342 321"],[3, "Bus","Not detected"]];
-    let rowsDay = [[1, "CL 201 534", "Car", "Black", "Yes","High"],
-                   [2, "CD 231 564", "Bus", "White", "No","Medium"],
-                   [3, "MH 234 453","Car","Green","Yes","Low"]];
-    res.render('home',{currentRows:currentRows, rowsDay:rowsDay,pageName:"home"});
-    
-});
-app.get('/data',(req,res)=>{
-  res.render('data',{pageName:'data'});
-});
-app.post('/api/addUser',(req,res)=>{
-  console.log(req.body);
-  if(req.body == null)
-  {
-    res.status(400);
-    res.send({response:'null body'});
-  }
-  else if(!req.body.licenseNumberInput)
-  {
-     
-    res.status(400);
-    res.send({response:'null license Number'});
-  }
-  else if(!req.body.ownerInput || req.body.ownerInput=='INVALID')
-  {
-    res.status(400);
-    res.send({response:'null owner'});
-  }
- 
-  res.send(JSON.stringify({response:"Success!!"}));
-});
-app.get('/assets/video',(req,res)=>{
-  const videoPath = path.join(__dirname,'BACKEND','assets','video.mp4');
-  const stat = fs.statSync(videoPath);
-  const fileSize = stat.size;
-  const range = req.headers.range;
-  if (range) {
-    const parts = range.replace(/bytes=/, "").split("-");
-    const start = parseInt(parts[0], 10);
-    const end = parts[1]
-      ? parseInt(parts[1], 10)
-      : fileSize-1;
-    const chunksize = (end-start)+1;
-    const file = fs.createReadStream(videoPath, {start, end});
-    const head = {
-      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': chunksize,
-      'Content-Type': 'video/mp4',
-    };
-    res.writeHead(206, head);
-    file.pipe(res);
-  } else {
-    const head = {
-      'Content-Length': fileSize,
-      'Content-Type': 'video/mp4',
-    };
-    res.writeHead(200, head);
-    fs.createReadStream(videoPath).pipe(res);
-  }
-});
 //404 handler
 app.use((req,res,next)=>{
     //TODO: render 404 page here

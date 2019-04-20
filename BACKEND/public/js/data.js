@@ -1,11 +1,11 @@
 $(document).ready(function(){
-    $("#ownerInput").select2({
+    $("#owner_ref").select2({
         width:'resolve'
     });
     $('#vehicleDataSubmit').click((event)=>{
         event.preventDefault();
         $.ajax({
-            url:"/api/addUser",
+            url:"/api/addvehicle",
             dataType:'json',
             type:'post',
             contentType:'application/x-www-form-urlencoded',

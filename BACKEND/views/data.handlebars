@@ -14,12 +14,13 @@
                 <div class="card-body"> 
                     <form method="POST" id="vehicleAddForm">
                         <div class="form-group">
-                            <label for="licenseNumberInput">License Number</label>
-                            <input type="text" class="form-control" id="licenseNumberInput" name="licenseNumberInput" placeholder="Enter license Number">
+                            <label for="licensePlateNo">License Number</label>
+                            <input type="text" class="form-control" id="licensePlateNo" 
+                                name="licensePlateNo" placeholder="Enter license Number">
                         </div>
                         <div class="form-group">
-                            <label for="colorInput">Color</label>
-                            <select name="colorInput" id="colorInput" class="form-control">
+                            <label for="color">Color</label>
+                            <select name="color" id="color" class="form-control">
                                 <option value="black">Black</option>
                                 <option value="blue">Blue</option>
                                 <option value="green">Green</option>
@@ -31,8 +32,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="vehicleTypeInput">Type of Vehicle</label>
-                            <select name="vehicleTypeInput" id="vehicleTypeInput" class="form-control">
+                            <label for="typeofVehicle">Type of Vehicle</label>
+                            <select name="typeofVehicle" id="typeofVehicle" class="form-control">
                                 <option value="car">Car</option>
                                 <option value="bus">Bus</option>
                                 <option value="truck">Truck</option>
@@ -44,12 +45,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="vehicleModelInput">Model of Vehicle</label>
-                            <input type="text" name="vehicleModelInput" id="vehicleModelInput" class="form-control">
+                            <label for="model">Model of Vehicle</label>
+                            <input type="text" name="model" id="model" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label for="ownerInput">Owner</label>
-                            <select name="ownerInput" id="ownerInput" class="form-control" style="width:100%">
+                            <label for="owner_ref">Owner</label>
+                            <select name="owner_ref" id="owner_ref" class="form-control" style="width:100%">
                                 <option value="INVALID">Select Owner</option>
                                 {{#each user}}
                                     <option value="{{this.id}}">{{this.name}} {{this.license_no}}</option>
