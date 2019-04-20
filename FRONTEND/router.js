@@ -8,7 +8,13 @@ router.get('/data',(req,res)=>{
 
     Model.User.findAll().then((users)=>
     {
-        res.render('data',{pageName:'data',users:users});
+        Model.Vehicle.findAll().then((vehicles)=>{
+            Model.InfractionRecord.findAll().then((records)=>{
+                res.render('data',{pageName:'data',users:users,vehicles:vehicles,records:records});
+            })
+            
+        })
+        
     },err=>
     {
         res.render('data',{pageName:'data'});

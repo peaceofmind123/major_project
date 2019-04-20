@@ -1,6 +1,95 @@
 <script src="/js/data.js"></script>
 <div class="container">
-   <div class="accordion" id="accordionExample">
+   <div class="card text-center mt-5">
+       <div class="card-header">
+           Users
+       </div>
+       <div class="card-body">
+           <table class="table table-striped table-hover table-bordered text-center">
+               <thead class="thead-dark">
+                   <tr>
+                       <th>S.N.</th>
+                       <th>Name</th>
+                       <th>Address</th>
+                       <th>Citizenship Number</th>
+                       <th>License Number</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   {{#each users}}
+                   <tr>
+                       <td>{{this.id}}</td>
+                       <td>{{this.name}}</td>
+                       <td>{{this.address}}</td>
+                       <td>{{this.citizenship_no}}</td>
+                       <td>{{this.license_no}}</td>
+                   </tr>
+                   {{/each}}
+               </tbody>
+           </table>
+       </div>
+   </div>
+   <div class="card text-center mt-5">
+       <div class="card-header">
+           Vehicles
+       </div>
+       <div class="card-body">
+           <table class="table table-striped table-hover table-bordered text-center">
+               <thead class="thead-dark">
+                   <tr>
+                       <th>S.N.</th>
+                       <th>License Plate Number</th>
+                       <th>Color</th>
+                       <th>Type of Vehicle</th>
+                       <th>Model</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   {{#each vehicles}}
+                   <tr>
+                       <td>{{this.id}}</td>
+                       <td>{{this.licensePlateNo}}</td>
+                       <td>{{this.color}}</td>
+                       <td>{{this.typeofVehicle}}</td>
+                       <td>{{this.model}}</td>
+                   </tr>
+                   {{/each}}
+               </tbody>
+           </table>
+       </div>
+   </div>
+      <div class="card text-center mt-5">
+       <div class="card-header">
+           Infraction Records
+       </div>
+       <div class="card-body">
+           <table class="table table-striped table-hover table-bordered text-center">
+               <thead class="thead-dark">
+                   <tr>
+                       <th>S.N.</th>
+                       <th>Type of Infraction</th>
+                       <th>Severity</th>
+                       <th>Date</th>
+                       <th>Time</th>
+                       <th>Location</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   {{#each records}}
+                   <tr>
+                       <td>{{this.id}}</td>
+                       <td>{{this.type}}</td>
+                       <td>{{this.severity}}</td>
+                       <td>{{this.date}}</td>
+                       <td>{{this.time}}</td>
+                       <td>{{this.location}}</td>
+                   </tr>
+                   {{/each}}
+               </tbody>
+           </table>
+       </div>
+   </div>
+   <div class="accordion mt-5" id="accordionExample">
         <div class="card">
             <div class="card-header text-center" id="headingOne">
                 <h2 class="mb-0">
