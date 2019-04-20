@@ -37,11 +37,57 @@ router.get('/assets/video',(req,res)=>{
     }
   });
 
+//respond to xhr of adding user
+router.post('/adduser',(req,res)=>{
+    console.log(req.body);
+    if(req.body == null || req.body == '')
+    {
+        res.status(400);
+        res.send({response:'null body'});
+    }
+    else if(req.body.name==null || req.body.name=='')
+    {
+        res.status(400);
+        res.send({response:'null name'});
+    }
+    else if(!req.body.citizenship_no || req.body.citizenship_no=='')
+    {
+        res.status(400);
+        res.send({response:'null citizenship_no'});       
+    }
+    else if(!req.body.license_no || req.body.license_no=='')
+    {
+        res.status(400);
+        res.send({response:'null license_no'});
+    }
+    else if(!req.body.address || req.body.address=='')
+    {
+        res.status(400);
+        res.send({response:'null address'});
+    }
+    else {
+        try {
+            user = Model.User.create({
+                name: req.body.name,
+                citizenship_no: req.body.citizenship_no,
+                license_no: req.body.license_no,
+                address: req.body.address
+            }).then((user)=>{
+                console.log(`${user} created`);
+                res.send({response:'success'});
+            });
+        }
+        catch(e) {
+            res.status(400);
+            res.send({response: e});
+        }
+    }
+});
 
-// respond to xhr of adding user
+// respond to xhr of adding vehicle
 router.post('/addvehicle',(req,res)=>{
-  console.log(req.body || req.body == '');
-  if(req.body == null)
+  console.log(req.body);
+  if(req.body == null || req.body == '')
   {
     res.status(400);
     res.send({response:'null body'});
@@ -68,14 +114,16 @@ router.post('/addvehicle',(req,res)=>{
                     model: req.body.model,
                     owner_ref: req.body.owner_ref
                 }
-            );
+            ).then((result)=>{
+                res.send({response:'success'});
+            });
       }
       catch(e) {
             res.status(400);
             res.send({response: e});
       }
   }
-  res.send(JSON.stringify({response:"Success!!"}));
+  
 });
 
 
