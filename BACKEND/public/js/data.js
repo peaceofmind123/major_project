@@ -3,8 +3,27 @@ $(document).ready(function(){
         width:'resolve'
     });
     $(".form-control").keyup(function(){
-        
-        $(this).removeClass('is-invalid').addClass('is-valid');
+        if($(this).hasClass('is-invalid'))
+            {
+                $(this).removeClass('is-invalid').addClass('is-valid');           
+            }
+    });
+    $("#userDataSubmit").click((event)=>{
+        event.preventDefault();
+        $.ajax({
+            url:"/api/adduser",
+            dataType:'json',
+            type:'post',
+            contentType:'application/x-www-form-urlencoded',
+            data: $('#userAddForm').serialize(),
+            success: function(data,textStatus,jqxhr) {
+                location.reload();
+            },
+            error: function(jqxhr,textStatus,errorThrown){
+             //TODO: handle error
+             console.log(jqxhr);   
+            }
+        });
     });
     $('#vehicleDataSubmit').click((event)=>{
         event.preventDefault();
