@@ -67,14 +67,18 @@ router.post('/adduser',(req,res)=>{
     }
     else {
         try {
-            user = Model.User.create({
+            userCreatePromise= Model.User.create({
                 name: req.body.name,
                 citizenship_no: req.body.citizenship_no,
                 license_no: req.body.license_no,
                 address: req.body.address
-            }).then((user)=>{
+            });
+            userCreatePromise.then((user)=>{
                 console.log(`${user} created`);
                 res.send({response:'success'});
+            },(error)=>{
+                console.log(error);
+                res.send({response:error});
             });
         }
         catch(e) {
@@ -111,39 +115,30 @@ router.post('/addvehicle',(req,res)=>{
                 where: {
                     id: req.body.owner_ref
                 }
-            }).then((user)=>{
-                Model.Vehicle.create({
-                    licensePlateNo: req.body.licensePlateNo,
-                    color: req.body.color,
-                    typeofVehicle: req.body.typeofVehicle,
-                    model: req.body.model
-                }).then((vehicle)=>{
-                    user.setVehicles([vehicle]);
-                    res.send({response:'success'});
-                });
-            });
-            
-            /*
-            vehicle = Model.Vehicle.create(
+            }).then(user=>
                 {
-                    licensePlateNo: req.body.licensePlateNo,
-                    color: req.body.color,
-                    typeofVehicle: req.body.typeofVehicle,
-                    model: req.body.model
-                    
-                }
-            ).then((vehicle)=>{
-                vehicle.setUser(Model.User.findOne({
-                    where: {
-                        id: req.body.owner_ref
-                    }
-                })).then((vehicle)=>{
-                    res.send({response:'success'});
+                    Model.Vehicle.create({
+                        licensePlateNo: req.body.licensePlateNo,
+                        color: req.body.color,
+                        typeofVehicle: req.body.typeofVehicle,
+                        model: req.body.model
+                    }).then(vehicle=>
+                        {
+                            user.setVehicles([vehicle]);
+                            res.send({response:'success'});
+                        }, error=>
+                        {
+                            console.log(error);
+                            res.status(400);
+                            res.send({response:error});
+                        });
+                }, error=>
+                {
+                    console.log(error);
+                    res.status(400);
+                    res.send({response:error});
                 });
-                
-            });
-            */
-      }
+        }
       catch(e) {
             res.status(400);
             res.send({response: e});
@@ -152,6 +147,7 @@ router.post('/addvehicle',(req,res)=>{
   
 });
 
+//response to xhr of adding infractionrecord
 
 
 module.exports = router;
