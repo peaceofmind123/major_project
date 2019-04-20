@@ -1,3 +1,4 @@
+//TODO: refactor this server script
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -46,6 +47,24 @@ app.get('/data',(req,res)=>{
   res.render('data',{pageName:'data'});
 });
 app.post('/api/addUser',(req,res)=>{
+  console.log(req.body);
+  if(req.body == null)
+  {
+    res.status(400);
+    res.send({response:'null body'});
+  }
+  else if(!req.body.licenseNumberInput)
+  {
+     
+    res.status(400);
+    res.send({response:'null license Number'});
+  }
+  else if(!req.body.ownerInput || req.body.ownerInput=='INVALID')
+  {
+    res.status(400);
+    res.send({response:'null owner'});
+  }
+ 
   res.send(JSON.stringify({response:"Success!!"}));
 });
 app.get('/assets/video',(req,res)=>{
