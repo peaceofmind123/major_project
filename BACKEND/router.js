@@ -6,7 +6,7 @@ let router = express.Router();
 
 //the video streamer
 router.get('/assets/video',(req,res)=>{
-    console.log()
+    
     const videoPath = path.join(__dirname,'assets','video.mp4');
     const stat = fs.statSync(videoPath);
     const fileSize = stat.size;
@@ -96,11 +96,11 @@ router.post('/addvehicle',(req,res)=>{
     res.status(400);
     res.send({response:'null body'});
   }
-  else if(req.body.licenseNumberInput=='')
+  else if(req.body.licensePlateNo=='')
   {
      
     res.status(400);
-    res.send({response:'null license Number'});
+    res.send({response:'null license number'});
   }
   else if(req.body.owner_ref==null || req.body.owner_ref=='INVALID')
   {

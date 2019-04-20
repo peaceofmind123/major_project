@@ -10,7 +10,7 @@ const Op = Sequelize.Op;
 
 //associations
 User.hasMany(Vehicle);
-Vehicle.belongsTo(User);
+
 User.hasMany(InfractionRecord);
 
 //to be applied only if db definition is edited... remove in production

@@ -12,11 +12,14 @@
 
             <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div class="card-body"> 
-                    <form method="POST" id="vehicleAddForm">
+                    <form method="POST" id="vehicleAddForm" novalidate>
                         <div class="form-group">
                             <label for="licensePlateNo">License Number</label>
                             <input type="text" class="form-control" id="licensePlateNo" 
-                                name="licensePlateNo" placeholder="Enter license Number">
+                                name="licensePlateNo" placeholder="Enter license Number" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid license number
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="color">Color</label>
@@ -52,10 +55,13 @@
                             <label for="owner_ref">Owner</label>
                             <select name="owner_ref" id="owner_ref" class="form-control" style="width:100%">
                                 <option value="INVALID">Select Owner</option>
-                                {{#each user}}
+                                {{#each users}}
                                     <option value="{{this.id}}">{{this.name}} {{this.license_no}}</option>
                                 {{/each}}
-                            </select>                            
+                            </select>    
+                            <div class="invalid-feedback">
+                                Please select a valid owner 
+                            </div>                        
                         </div>
                         <button class="btn btn-primary" id="vehicleDataSubmit">Submit</button>                        
                     </form>

@@ -1,10 +1,19 @@
 //the main frontend router
 const express = require("express");
 let router = express.Router();
+const Model = require('../BACKEND/models/Model');
 
 //the add data page handler
 router.get('/data',(req,res)=>{
-    res.render('data',{pageName:'data'});
+
+    Model.User.findAll().then((users)=>
+    {
+        res.render('data',{pageName:'data',users:users});
+    },err=>
+    {
+        res.render('data',{pageName:'data'});
+    });
+    
   });
 
 //the main page handler
