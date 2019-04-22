@@ -243,19 +243,24 @@
                     </div>
                     <div class="form-group">
                         <label for="date">Date of Infraction</label>
-                        <input type="text" name="date" id="date" class="form-control" value="">
+                        <input type="text" name="date" id="date" class="form-control" value="" required>
                         <span class="input-group-addon">
 								  <i class="glyphicon glyphicon-calendar"></i>
 						</span>
+                        <div class="invalid-feedback">
+                            Please enter a valid date
+                        </div>
                     </div>
                     <div class="form-group bootstrap-timepicker timepicker">
                         <label for="time">Time of Infraction</label>
-                        <input id="time" type="text" class="form-control" name="time">
-                        
+                        <input id="time" type="text" class="form-control" name="time" required>
+                        <div class="invalid-feedback">
+                            Please enter a valid time
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="location">Location of Infraction</label>
-                        <input type="text" name="location" id="location" class="form-control">
+                        <input type="text" name="location" id="location" class="form-control" required>
                     </div>
                     <div class="form-group">
                             <label for="userId">Person</label>

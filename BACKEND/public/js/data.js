@@ -19,6 +19,12 @@ $(document).ready(function(){
                 $(this).removeClass('is-invalid').addClass('is-valid');           
             }
     });
+    $(".form-control").on("change",function(){
+        if($(this).hasClass('is-invalid'))
+        {
+            $(this).removeClass('is-invalid').addClass('is-valid');
+        }
+    });
     $("#userDataSubmit").click((event)=>{
         event.preventDefault();
         $.ajax({
