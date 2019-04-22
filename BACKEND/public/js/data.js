@@ -2,6 +2,9 @@ $(document).ready(function(){
     $("#owner_ref").select2({
         width:'resolve'
     });
+    $("#userId").select2({
+        width: 'resolve'
+    });
     $(".form-control").keyup(function(){
         if($(this).hasClass('is-invalid'))
             {

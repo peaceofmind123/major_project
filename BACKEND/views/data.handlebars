@@ -217,7 +217,51 @@
             </div>
             <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
             <div class="card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                <form method="post" id="infractionAddForm" novalidate>
+                    <div class="form-group">
+                        <label for="type">Type of Infraction</label>
+                        <select name="type" id="type" class="form-control">
+                            <option value="lane infraction">Lane Infraction</option>
+                            <option value="accident">Accident</option>
+                            <option value="overspeeding">Overspeeding</option>
+                            <option value="drunk driving">Drunk Driving</option>
+                            <option value="reckless driving">Reckless Driving</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="severity">Severity</label>
+                        <select name="severity" id="severity" class="form-control">
+                            <option value="mild">Mild</option>
+                            <option value="moderate">Moderate</option>
+                            <option value="severe">Severe</option>
+                            <option value="fatal">Fatal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date of Infraction</label>
+                        <input type="text" name="date" id="date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="time">Time of Infraction</label>
+                        <input type="text" name="time" id="time" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location of Infraction</label>
+                        <input type="text" name="location" id="location" class="form-control">
+                    </div>
+                    <div class="form-group">
+                            <label for="userId">Person</label>
+                            <select name="userId" id="userId" class="form-control" style="width:100%">
+                                <option value="INVALID">Select Person</option>
+                                {{#each users}}
+                                    <option value="{{this.id}}">{{this.name}} {{this.license_no}}</option>
+                                {{/each}}
+                            </select>    
+                            <div class="invalid-feedback">
+                                Please select a valid user 
+                            </div>                        
+                        </div>
+                </form>
             </div>
             </div>
         </div>
