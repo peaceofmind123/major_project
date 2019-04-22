@@ -14,7 +14,7 @@ User.hasMany(Vehicle);
 User.hasMany(InfractionRecord);
 
 //to be applied only if db definition is edited... remove in production
-//db.sync();
+db.sync({force:true});
 module.exports = {
     User: User,
     Vehicle: Vehicle,
