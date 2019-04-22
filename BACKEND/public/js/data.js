@@ -5,6 +5,14 @@ $(document).ready(function(){
     $("#userId").select2({
         width: 'resolve'
     });
+    let date = new Date();
+    $("#date").datepicker({
+        "todayHighlight":true,
+        "setDate": new Date(date.getFullYear(),date.getMonth(), date.getDay()),
+        "autoclose":true
+    });
+        
+    $("#time").timepicker();
     $(".form-control").keyup(function(){
         if($(this).hasClass('is-invalid'))
             {
