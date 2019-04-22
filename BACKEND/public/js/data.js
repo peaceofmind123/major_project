@@ -37,10 +37,37 @@ $(document).ready(function(){
                 location.reload();
             },
             error: function(jqxhr,textStatus,errorThrown){
-             //TODO: handle error
+             
              console.log(jqxhr);   
+             switch(jqxhr.responseJSON.response)
+                    {
+                        case "null name":
+                            $("#name").addClass('is-invalid').focus();
+                            break;
+                        case "null address":
+                            $('#address').addClass('is-invalid').focus();
+                            break;
+                        case "null license_no":
+                            $("#license_no").addClass('is-invalid').focus();
+                            break;
+                        case "null citizenship_no":
+                            $("#citizenship_no").addClass('is-invalid').focus();
+                            break;
+                        
+                        default:
+                        {
+                            console.log(jqxhr);
+                            err = jqxhr.responseJSON.response.errors[0];
+
+                            $(`#${err.path}`).siblings(".invalid-feedback").text(`the entered ${err.path} already exists`);
+                            $(`#${err.path}`).addClass('is-invalid').focus();
+                            
+                        }
+                    }
+                }
+
             }
-        });
+        );
     });
     $('#vehicleDataSubmit').click((event)=>{
         event.preventDefault();
