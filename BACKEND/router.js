@@ -124,7 +124,7 @@ router.post('/addvehicle',(req,res)=>{
                         model: req.body.model
                     }).then(vehicle=>
                         {
-                            user.setVehicles([vehicle]);
+                            user.addVehicle(vehicle);
                             res.send({response:'success'});
                         }, error=>
                         {
@@ -148,6 +148,75 @@ router.post('/addvehicle',(req,res)=>{
 });
 
 //response to xhr of adding infractionrecord
-
+router.post('/addinfraction',(req,res)=>{
+    console.log(req.body);
+    if(req.body == null || req.body == '')
+    {
+      res.status(400);
+      res.send({response:'null body'});
+    }
+    else if(req.body.date=='')
+    {
+       
+      res.status(400);
+      res.send({response:'null date'});
+    }
+    else if(req.body.userId==null || req.body.userId=='INVALID')
+    {
+        console.log(req.body.owner_ref);
+      res.status(400);
+      res.send({response:'null person'});
+    }
+    else if(req.body.time==null || req.body.time=='')
+    {
+        res.status(400);
+        res.send({response:'null time'});
+    }
+    else if(req.body.location==null || req.body.location=='')
+    {
+        res.status(400);
+        res.send({response:'null location'});
+    }
+    else
+    {
+        try {
+              Model.User.findOne({
+                  where: {
+                      id: req.body.userId
+                  }
+              }).then(user=>
+                  {
+                      Model.InfractionRecord.create({
+                          type: req.body.type,
+                          severity: req.body.severity,
+                          date: req.body.date,
+                          time: req.body.time,
+                          location:req.body.location
+                      }).then(infractionRecord=>
+                          {
+                              
+                              user.addInfractionrecord(infractionRecord);
+                              res.send({response:'success'});
+                          }, error=>
+                          {
+                              console.log(error);
+                              res.status(400);
+                              res.send({response:error});
+                          });
+                  }, error=>
+                  {
+                      console.log(error);
+                      res.status(400);
+                      res.send({response:error});
+                  });
+          }
+        catch(e) {
+              res.status(400);
+              res.send({response: e});
+        }
+    }
+    
+  });
+  
 
 module.exports = router;

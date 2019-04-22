@@ -5,7 +5,8 @@ const InfractionRecord = db.define('infractionrecord',{
     
     id: { //the partial key: its own id
         type:Sequelize.BIGINT,
-        primaryKey:true
+        primaryKey:true,
+        autoIncrement:true
     },
     type: { //the type of infraction
         type:Sequelize.ENUM,

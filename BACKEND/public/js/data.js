@@ -92,6 +92,12 @@ $(document).ready(function(){
                         case "null person":
                             $("#userId").addClass('is-invalid').focus();
                             break;
+                        case "null time":
+                            $("#time").addClass('is-invalid').focus();
+                            break;
+                        case "null location":
+                            $("#location").addClass('is-invalid').focus();
+                            break;
                         default:
                         {
                             console.log(jqxhr);
