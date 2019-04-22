@@ -70,5 +70,39 @@ $(document).ready(function(){
 
             });
             
-        });
     });
+    
+    $('#infractionDataSubmit').click(function(event){
+        event.preventDefault();
+        $.ajax({
+            url:"/api/addinfraction",
+            dataType:'json',
+            type:'post',
+            contentType:'application/x-www-form-urlencoded',
+            data: $('#infractionAddForm').serialize(),
+            success: function(data,textStatus,jqxhr){
+                location.reload();
+            },
+            error: function(jqxhr, textStatus,errorThrown) {
+                    switch(jqxhr.responseJSON.response)
+                    {
+                        case "null date":
+                            $("#date").addClass('is-invalid').focus();
+                            break;
+                        case "null person":
+                            $("#userId").addClass('is-invalid').focus();
+                            break;
+                        default:
+                        {
+                            console.log(jqxhr);
+                            err = jqxhr.responseJSON.response.errors[0];
+
+                            $(`#${err.path}`).siblings(".invalid-feedback").text(`the entered ${err.path} already exists`);
+                            $(`#${err.path}`).addClass('is-invalid').focus();
+                            
+                        }
+                    }
+                }
+        });
+    })
+});
