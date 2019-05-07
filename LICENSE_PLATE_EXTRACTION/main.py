@@ -53,12 +53,15 @@ class PageThree(tk.Frame):
                 if self.clicked_points[0][0] > self.clicked_points[1][0]:
                     self.clicked_points = [self.clicked_points[1], self.clicked_points[0]]
                 self.image_points[self.filenames[self.filePointer]] = list(self.clicked_points)
+                self.point_plot.remove()
+                self.point_plot = None
                 self.click_count = 0
                 self.clicked_points = []
+                self.agg.draw()
                 print(self.image_points)
 
             elif self.click_count == 1:
-                self.a.scatter([event.xdata], [event.ydata],c='r',s=40)
+                self.point_plot = self.a.scatter([event.xdata], [event.ydata],c='r',s=40)
                 self.agg.draw()
 
     def onSelectImages(self):
@@ -102,6 +105,7 @@ class PageThree(tk.Frame):
         self.filenames = []
         self.clicked_points = []
         self.click_count = 0
+        self.point_plot = None
         self.image_points = dict()
         f = Figure(figsize=(10, 10), dpi=200)
         self.a = f.add_subplot(111)
