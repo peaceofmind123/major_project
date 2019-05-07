@@ -18,7 +18,7 @@ class SeaofBTCapp(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         tk.Tk.iconbitmap(self, default="bird.jpg")
-        tk.Tk.wm_title(self, "Sea of BTC client")
+        tk.Tk.wm_title(self, "Data Labeler")
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -27,12 +27,12 @@ class SeaofBTCapp(tk.Tk):
 
         self.frames = {}
 
-        for F in (StartPage, PageOne, PageTwo, PageThree):
-            frame = F(container, self)
 
-            self.frames[F] = frame
+        frame = PageThree(container, self)
 
-            frame.grid(row=0, column=0, sticky="nsew")
+        self.frames[PageThree] = frame
+
+        frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(PageThree)
 
@@ -41,89 +41,68 @@ class SeaofBTCapp(tk.Tk):
         frame.tkraise()
 
 
-class StartPage(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Start Page", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)
-
-        button = ttk.Button(self, text="Visit Page 1",
-                            command=lambda: controller.show_frame(PageOne))
-        button.pack()
-
-        button2 = ttk.Button(self, text="Visit Page 2",
-                             command=lambda: controller.show_frame(PageTwo))
-        button2.pack()
-
-        button3 = ttk.Button(self, text="Graph Page",
-                             command=lambda: controller.show_frame(PageThree))
-        button3.pack()
-
-
-class PageOne(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Page One!!!", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)
-
-        button1 = ttk.Button(self, text="Back to Home",
-                             command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-
-        button2 = ttk.Button(self, text="Page Two",
-                             command=lambda: controller.show_frame(PageTwo))
-        button2.pack()
-
-
-class PageTwo(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Page Two!!!", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)
-
-        button1 = ttk.Button(self, text="Back to Home",
-                             command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-
-        button2 = ttk.Button(self, text="Page One",
-                             command=lambda: controller.show_frame(PageOne))
-        button2.pack()
-
-
-
-
-
 
 class PageThree(tk.Frame):
     def onclick(self,event):
         print(event.x, event.y, event.xdata, event.ydata)
+        if event.xdata is not None and event.ydata is not None:
+            self.click_count += 1
+            self.clicked_points.append((event.x, event.y))
+
+            if self.click_count == 2:
+                if self.clicked_points[0][0] > self.clicked_points[1][0]:
+                    self.clicked_points = [self.clicked_points[1], self.clicked_points[0]]
+                self.image_points[self.filenames[self.filePointer]] = list(self.clicked_points)
+                self.click_count = 0
+                self.clicked_points = []
+                print(self.image_points)
+
 
     def onSelectImages(self):
-        self.filenames = filedialog.askopenfilenames(initialdir="/", title="Select file",
-                                                         filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
-        if self.filenames is not None:
-            img = mpimg.imread(self.filenames[0])
-            self.a.imshow(img)
-            self.agg.draw()
+        filenames = list(filedialog.askopenfilenames(initialdir="/", title="Select file",
+                                                         filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*"))))
+
+        if len(filenames) != 0:
+            if len(self.filenames) == 0:
+                self.filenames = filenames
+            else:
+
+                self.filenames.extend(filenames)
+
+            self._refreshImage()
+
+
+    def _refreshImage(self):
+        try:
+            img = mpimg.imread(self.filenames[self.filePointer])
+        except:
+            return
+
+        self.a.imshow(img, cmap='gray')
+        self.agg.draw()
 
     def onPrevious(self):
-        pass
+        if self.filePointer > 0:
+            self.filePointer -= 1
+            self._refreshImage()
 
     def onNext(self):
-        pass
+        if self.filePointer < len(self.filenames)-1:
+            self.filePointer += 1
+            self._refreshImage()
 
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Labeling UI", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
-        self.filenames = None
+        self.filenames = []
+        self.clicked_points = []
+        self.click_count = 0
+        self.image_points = dict()
         f = Figure(figsize=(10, 10), dpi=200)
         self.a = f.add_subplot(111)
-
+        self.filePointer = 0
         topFrame = tk.Frame(self)
         topFrame.pack()
 
@@ -139,7 +118,7 @@ class PageThree(tk.Frame):
         button3.pack(side=tk.LEFT)
 
 
-        if self.filenames is not None:
+        if len(self.filenames) != 0:
             img = mpimg.imread(self.filenames[0])
             self.a.imshow(img)
 
