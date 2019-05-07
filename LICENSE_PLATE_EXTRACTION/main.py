@@ -3,13 +3,14 @@ import matplotlib
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
-
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
 import tkinter as tk
 from tkinter import ttk, filedialog
 
 matplotlib.use("TkAgg")
 LARGE_FONT = ("Verdana", 12)
-
+matplotlib.interactive(True)
 
 class SeaofBTCapp(tk.Tk):
 
@@ -91,55 +92,64 @@ class PageTwo(tk.Frame):
                              command=lambda: controller.show_frame(PageOne))
         button2.pack()
 
-def onclick(event):
-    print(event.x, event.y, event.xdata, event.ydata)
-
-def onSelectImages(frameRef):
-    frameRef.filenames = filedialog.askopenfilenames(initialdir="/", title="Select file",
-                                                 filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
-    print(frameRef.filenames)
 
 
-def onPrevious(frameRef):
-    pass
 
 
-def onNext(frameRef):
-    pass
 
 class PageThree(tk.Frame):
+    def onclick(self,event):
+        print(event.x, event.y, event.xdata, event.ydata)
+
+    def onSelectImages(self):
+        self.filenames = filedialog.askopenfilenames(initialdir="/", title="Select file",
+                                                         filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
+        if self.filenames is not None:
+            img = mpimg.imread(self.filenames[0])
+            self.a.imshow(img)
+            self.agg.draw()
+
+    def onPrevious(self):
+        pass
+
+    def onNext(self):
+        pass
+
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Labeling UI", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
         self.filenames = None
+        f = Figure(figsize=(10, 10), dpi=200)
+        self.a = f.add_subplot(111)
+
         topFrame = tk.Frame(self)
         topFrame.pack()
 
         button1 = ttk.Button(topFrame, text="Select Images",
-                             command=lambda: onSelectImages(self))
+                             command=lambda: self.onSelectImages())
         button2 = ttk.Button(topFrame, text="Previous",
-                             command=lambda: onPrevious(self))
+                             command=lambda: self.onPrevious())
         button3 = ttk.Button(topFrame, text="Next",
-                             command=lambda: onNext(self))
+                             command=lambda: self.onNext())
 
         button2.pack(side=tk.LEFT)
         button1.pack(side=tk.LEFT)
         button3.pack(side=tk.LEFT)
 
-        f = Figure(figsize=(10, 10), dpi=200)
-        a = f.add_subplot(111)
 
-        a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+        if self.filenames is not None:
+            img = mpimg.imread(self.filenames[0])
+            self.a.imshow(img)
 
-        canvas = FigureCanvasTkAgg(f, self)
-        canvas.mpl_connect('button_press_event', onclick)
-        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.agg = FigureCanvasTkAgg(f, self)
+        self.agg.mpl_connect('button_press_event', self.onclick)
+        self.agg.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
-        toolbar = NavigationToolbar2Tk(canvas, self)
+        toolbar = NavigationToolbar2Tk(self.agg, self)
         toolbar.update()
-        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.agg._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 
 app = SeaofBTCapp()
