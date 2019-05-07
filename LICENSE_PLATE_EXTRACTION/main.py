@@ -57,6 +57,9 @@ class PageThree(tk.Frame):
                 self.clicked_points = []
                 print(self.image_points)
 
+            elif self.click_count == 1:
+                self.a.scatter([event.xdata], [event.ydata],c='r',s=40)
+                self.agg.draw()
 
     def onSelectImages(self):
         filenames = list(filedialog.askopenfilenames(initialdir="/", title="Select file",
