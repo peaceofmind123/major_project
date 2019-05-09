@@ -1,6 +1,7 @@
 import matplotlib
 import gc
-
+import json
+from dicttoxml import dicttoxml
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 import matplotlib.image as mpimg
@@ -66,6 +67,7 @@ class PageThree(tk.Frame):
                 self.clicked_points = []
                 self.agg.draw()
                 print(self.image_points)
+                self._save()
 
             elif self.click_count == 1:
                 if self.rect is not None:
@@ -91,6 +93,13 @@ class PageThree(tk.Frame):
 
             self._refreshImage()
 
+    def _save(self):
+        if self.image_points is not None and len(self.image_points) > 0:
+            with open('data.json',"w+") as dataFile:
+                dataFile.write(json.dumps(self.image_points))
+
+            with open('data.xml','w+') as dataFileX:
+                dataFileX.write(str(dicttoxml(self.image_points)))
 
     def _refreshImage(self):
 
