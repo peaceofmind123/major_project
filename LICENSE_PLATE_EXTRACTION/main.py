@@ -4,6 +4,7 @@ import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 import matplotlib.image as mpimg
+import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import tkinter as tk
 from tkinter import ttk, filedialog
@@ -47,13 +48,20 @@ class PageThree(tk.Frame):
         print(event.x, event.y, event.xdata, event.ydata)
         if event.xdata is not None and event.ydata is not None:
             self.click_count += 1
-            self.clicked_points.append((event.x, event.y))
+            self.clicked_points.append((event.xdata, event.ydata))
 
             if self.click_count == 2:
                 if self.clicked_points[0][0] > self.clicked_points[1][0]:
                     self.clicked_points = [self.clicked_points[1], self.clicked_points[0]]
                 self.image_points[self.filenames[self.filePointer]] = list(self.clicked_points)
                 self.point_plot.remove()
+                rect = patches.Rectangle(tuple(self.clicked_points[0]),
+                                         self.clicked_points[1][0]-self.clicked_points[0][0],
+                                         self.clicked_points[1][1]-self.clicked_points[0][1],
+                                         edgecolor='r',
+                                         facecolor=(1,1,1,0),
+                                         linewidth=1)
+                self.a.add_patch(rect)
                 self.point_plot = None
                 self.click_count = 0
                 self.clicked_points = []
@@ -61,7 +69,7 @@ class PageThree(tk.Frame):
                 print(self.image_points)
 
             elif self.click_count == 1:
-                self.point_plot = self.a.scatter([event.xdata], [event.ydata],c='r',s=40)
+                self.point_plot = self.a.scatter([event.xdata], [event.ydata],c='r',s=20)
                 self.agg.draw()
 
     def onSelectImages(self):
