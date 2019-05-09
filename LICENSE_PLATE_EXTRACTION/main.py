@@ -61,6 +61,7 @@ class PageThree(tk.Frame):
                                                    facecolor=(1, 1, 1, 0), linewidth=1)
                 self.a.add_patch(self.rect)
                 self.point_plot = None
+
                 self.click_count = 0
                 self.clicked_points = []
                 self.agg.draw()
@@ -69,7 +70,12 @@ class PageThree(tk.Frame):
             elif self.click_count == 1:
                 if self.rect is not None:
                     self.rect.remove()
+                    self.rect = None
+                if self.point_plot is not None:
+                    self.point_plot = None
+                gc.collect()
                 self.point_plot = self.a.scatter([event.xdata], [event.ydata],c='r',s=20)
+                self.a.autoscale(tight=True)
                 self.agg.draw()
 
     def onSelectImages(self):
@@ -87,10 +93,14 @@ class PageThree(tk.Frame):
 
 
     def _refreshImage(self):
+
         try:
             if self.img is not None:
-                del self.a.images[0]
+                for i in range(len(self.a.images)):
+                    del self.a.images[i]
+
                 del self.img
+                self.img = None
                 gc.collect() # for efficiency
             self.img = mpimg.imread(self.filenames[self.filePointer])
         except Exception as e:
@@ -98,6 +108,7 @@ class PageThree(tk.Frame):
             return
 
         self.a.imshow(self.img, cmap='gray')
+
         self.agg.draw()
 
     def onPrevious(self):
@@ -126,8 +137,9 @@ class PageThree(tk.Frame):
         self.image_points = dict()
         self.rect = None
         self.img = None
-        f = Figure(figsize=(10, 10), dpi=200)
-        self.a = f.add_subplot(111)
+        self.f = Figure(figsize=(10, 10), dpi=200)
+        self.a = self.f.add_subplot(111)
+        self.a.autoscale(tight=True)
         self.filePointer = 0
         topFrame = tk.Frame(self)
         topFrame.pack()
@@ -148,7 +160,7 @@ class PageThree(tk.Frame):
             self.img = mpimg.imread(self.filenames[0])
             self.a.imshow(self.img)
 
-        self.agg = FigureCanvasTkAgg(f, self)
+        self.agg = FigureCanvasTkAgg(self.f, self)
         self.agg.mpl_connect('button_press_event', self.onclick)
         self.agg.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
