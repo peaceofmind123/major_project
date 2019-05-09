@@ -1,5 +1,5 @@
 import matplotlib
-
+import gc
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
@@ -55,13 +55,11 @@ class PageThree(tk.Frame):
                     self.clicked_points = [self.clicked_points[1], self.clicked_points[0]]
                 self.image_points[self.filenames[self.filePointer]] = list(self.clicked_points)
                 self.point_plot.remove()
-                rect = patches.Rectangle(tuple(self.clicked_points[0]),
-                                         self.clicked_points[1][0]-self.clicked_points[0][0],
-                                         self.clicked_points[1][1]-self.clicked_points[0][1],
-                                         edgecolor='r',
-                                         facecolor=(1,1,1,0),
-                                         linewidth=1)
-                self.a.add_patch(rect)
+                self.rect = patches.Rectangle(tuple(self.clicked_points[0]),
+                                                   self.clicked_points[1][0] - self.clicked_points[0][0],
+                                                   self.clicked_points[1][1] - self.clicked_points[0][1], edgecolor='r',
+                                                   facecolor=(1, 1, 1, 0), linewidth=1)
+                self.a.add_patch(self.rect)
                 self.point_plot = None
                 self.click_count = 0
                 self.clicked_points = []
@@ -69,6 +67,8 @@ class PageThree(tk.Frame):
                 print(self.image_points)
 
             elif self.click_count == 1:
+                if self.rect is not None:
+                    self.rect.remove()
                 self.point_plot = self.a.scatter([event.xdata], [event.ydata],c='r',s=20)
                 self.agg.draw()
 
@@ -88,21 +88,30 @@ class PageThree(tk.Frame):
 
     def _refreshImage(self):
         try:
-            img = mpimg.imread(self.filenames[self.filePointer])
-        except:
+            if self.img is not None:
+                del self.a.images[0]
+                del self.img
+                gc.collect() # for efficiency
+            self.img = mpimg.imread(self.filenames[self.filePointer])
+        except Exception as e:
+            print(e)
             return
 
-        self.a.imshow(img, cmap='gray')
+        self.a.imshow(self.img, cmap='gray')
         self.agg.draw()
 
     def onPrevious(self):
         if self.filePointer > 0:
             self.filePointer -= 1
+            if self.rect is not None:
+                self.rect.set_visible(False)
             self._refreshImage()
 
     def onNext(self):
         if self.filePointer < len(self.filenames)-1:
             self.filePointer += 1
+            if self.rect is not None:
+                self.rect.set_visible(False)
             self._refreshImage()
 
 
@@ -115,6 +124,8 @@ class PageThree(tk.Frame):
         self.click_count = 0
         self.point_plot = None
         self.image_points = dict()
+        self.rect = None
+        self.img = None
         f = Figure(figsize=(10, 10), dpi=200)
         self.a = f.add_subplot(111)
         self.filePointer = 0
@@ -134,8 +145,8 @@ class PageThree(tk.Frame):
 
 
         if len(self.filenames) != 0:
-            img = mpimg.imread(self.filenames[0])
-            self.a.imshow(img)
+            self.img = mpimg.imread(self.filenames[0])
+            self.a.imshow(self.img)
 
         self.agg = FigureCanvasTkAgg(f, self)
         self.agg.mpl_connect('button_press_event', self.onclick)
