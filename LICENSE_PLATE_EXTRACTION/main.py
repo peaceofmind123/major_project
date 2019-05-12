@@ -76,8 +76,8 @@ class PageThree(tk.Frame):
                 if self.point_plot is not None:
                     self.point_plot = None
                 gc.collect()
-                self.point_plot = self.a.scatter([event.xdata], [event.ydata],c='r',s=20)
-                self.a.autoscale(tight=True)
+                self.point_plot = self.a.scatter([event.xdata], [event.ydata],c='r',s=2)
+                self._refreshImage()
                 self.agg.draw()
 
     def onSelectImages(self):
