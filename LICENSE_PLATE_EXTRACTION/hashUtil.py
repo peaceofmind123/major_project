@@ -22,6 +22,7 @@ def hash_multiple_files(dirname):
         hash_file(os.path.abspath(os.path.join(dirname, filename)))
 
 
+# use python3 hashUtil.py images for our use case
 if __name__ == '__main__':
     if sys.argv[1] is None:
         print('requires positional argument "dirname"')

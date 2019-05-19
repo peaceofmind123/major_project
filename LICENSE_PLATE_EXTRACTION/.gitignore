@@ -2,3 +2,4 @@ venv/
 .idea/
 *.xml
 data.json
+images/
