@@ -1,3 +1,4 @@
+# Copyright Ashish Paudel, 2019. All rights reserved.
 import matplotlib
 import gc
 import json
@@ -12,6 +13,7 @@ import os
 import sys
 from tkinter import ttk, filedialog
 import copy
+
 
 matplotlib.use("TkAgg")
 LARGE_FONT = ("Verdana", 12)
