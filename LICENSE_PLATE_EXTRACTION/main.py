@@ -27,6 +27,9 @@ class DataLabeler(tk.Tk):
             self.clicked_points.append((event.xdata, event.ydata))
 
             if self.click_count == 2:
+                if self.temp_rect is not None:
+                    self.temp_rect.remove()
+                    self.temp_rect = None
                 if self.clicked_points[0][0] > self.clicked_points[1][0]:
                     self.clicked_points = [
                         self.clicked_points[1], self.clicked_points[0]]
@@ -59,6 +62,26 @@ class DataLabeler(tk.Tk):
                 self._refreshImage()
                 self.agg.draw()
 
+    def onMove(self, event):
+
+        if self.click_count != 1:
+            return
+
+        if self.temp_rect is not None:
+            self.temp_rect.remove()
+            self.temp_rect = None
+
+        self.temp_rect = patches.Rectangle(tuple(
+            self.clicked_points[0]),
+            event.xdata-self.clicked_points[0][0],
+            event.ydata-self.clicked_points[0][1],
+            facecolor=(1, 1, 1, 0),
+            edgecolor='r',
+            linewidth=1)
+
+        self.a.add_patch(self.temp_rect)
+        self.agg.draw()
+
     def onUndo(self, event):
         sys.stdin.flush()
         print(event.key)
@@ -71,6 +94,9 @@ class DataLabeler(tk.Tk):
             if self.rect is not None:
                 self.rect.remove()
                 self.rect = None
+            if self.temp_rect is not None:
+                self.temp_rect.remove()
+                self.temp_rect = None
             if self.point_plot is not None:
                 self.point_plot.remove()
                 self.point_plot = None
@@ -144,6 +170,7 @@ class DataLabeler(tk.Tk):
         self.point_plot = None
         self.image_points = dict()
         self.rect = None
+        self.temp_rect = None
         self.img = None
         self.f = Figure(figsize=(10, 10), dpi=200)
         self.a = self.f.add_subplot(111)
@@ -170,13 +197,14 @@ class DataLabeler(tk.Tk):
         self.agg = FigureCanvasTkAgg(self.f, self)
         self.agg.mpl_connect('button_press_event', self.onclick)
         self.agg.mpl_connect('key_press_event', self.onUndo)
-
+        self.agg.mpl_connect('motion_notify_event', self.onMove)
         self.agg.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         toolbar = NavigationToolbar2Tk(self.agg, self)
         toolbar.update()
         self.agg._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.agg._tkcanvas.focus()
+
+        self.agg._tkcanvas.focus_force()
         print(self.focus_displayof())
 
 
