@@ -11,6 +11,7 @@ import tkinter as tk
 import os
 import sys
 from tkinter import ttk, filedialog
+import copy
 
 matplotlib.use("TkAgg")
 LARGE_FONT = ("Verdana", 12)
@@ -106,7 +107,7 @@ class DataLabeler(tk.Tk):
 
     def onLoadImages(self):
         filenames = []
-        for root, directories, files in os.walk('./images'):
+        for root, directories, files in os.walk(os.path.join(os.path.dirname(sys.argv[0]), 'images')):
             if files is not None:
                 for f in files:
                     filenames.append(f'{root}/{f}')
@@ -122,11 +123,18 @@ class DataLabeler(tk.Tk):
 
     def _save(self):
         if self.image_points is not None and len(self.image_points) > 0:
-            with open('data.json', "w+") as dataFile:
-                dataFile.write(json.dumps(self.image_points))
-
-            with open('data.xml', 'w+') as dataFileX:
-                dataFileX.write(str(dicttoxml(self.image_points)))
+            try:
+                with open('data.json', "r") as dataFile:
+                    data = dataFile.read()
+                    if data is not None and data != '':
+                        jsonData = json.loads(data)
+                        self.image_points = copy.deepcopy(
+                            {**jsonData, **self.image_points})
+                with open('data.json', 'w') as dataFile:
+                    dataFile.write(json.dumps(self.image_points))
+            except FileNotFoundError:
+                with open('data.json', 'w') as dataFile:
+                    dataFile.write(json.dumps(self.image_points))
 
     def _refreshImage(self):
 
