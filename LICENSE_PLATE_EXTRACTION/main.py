@@ -17,36 +17,9 @@ LARGE_FONT = ("Verdana", 12)
 matplotlib.interactive(True)
 
 
-class SeaofBTCapp(tk.Tk):
-
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
-
-        tk.Tk.wm_title(self, "Data Labeler")
-
-        container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-
-        self.frames = {}
-
-        frame = PageThree(container, self)
-
-        self.frames[PageThree] = frame
-
-        frame.grid(row=0, column=0, sticky="nsew")
-
-        self.show_frame(PageThree)
-
-    def show_frame(self, cont):
-        frame = self.frames[cont]
-        frame.tkraise()
-
-
-class PageThree(tk.Frame):
+class DataLabeler(tk.Tk):
     def onclick(self, event):
-        self._nametowidget(self.winfo_parent()).focus()
+        self.agg._tkcanvas.focus_force()
 
         print(event.x, event.y, event.xdata, event.ydata)
         if event.xdata is not None and event.ydata is not None:
@@ -91,7 +64,7 @@ class PageThree(tk.Frame):
         print(event.key)
 
         if event.key == 'escape':
-            print('hey')
+
             self.click_count = 0
             self.clicked_points = []
 
@@ -102,7 +75,7 @@ class PageThree(tk.Frame):
                 self.point_plot.remove()
                 self.point_plot = None
             gc.collect()
-            # self._refreshImage()
+
             self.agg.draw()
 
     def onLoadImages(self):
@@ -162,11 +135,9 @@ class PageThree(tk.Frame):
                 self.rect.set_visible(False)
             self._refreshImage()
 
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-
-        label = tk.Label(self, text="Labeling UI", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        tk.Tk.wm_title(self, "Data Labeler")
         self.filenames = []
         self.clicked_points = []
         self.click_count = 0
@@ -205,8 +176,10 @@ class PageThree(tk.Frame):
         toolbar = NavigationToolbar2Tk(self.agg, self)
         toolbar.update()
         self.agg._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.agg._tkcanvas.focus()
+        print(self.focus_displayof())
 
 
-app = SeaofBTCapp()
+app = DataLabeler()
 
 app.mainloop()
