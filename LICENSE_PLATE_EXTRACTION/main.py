@@ -43,12 +43,17 @@ class DataLabeler(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+
         tk.Tk.wm_title(self, PAGE_TITLE)
+
+        # Global state variables
+
         self.filenames = []
+        # the buffer that holds coords of points clicked on the current image
         self.clicked_points = []
-        self.click_count = 0
-        self.point_plot = None
-        self.image_points = dict()
+        self.click_count = 0  # counts clicks: (mod 3)
+        self.point_plot = None  # stores coord of point clicked when click_count == 0
+        self.image_points = dict()  # top level
         self.rect = None
         self.temp_rect = None
         self.img = None
@@ -69,10 +74,6 @@ class DataLabeler(tk.Tk):
         button2.pack(side=tk.LEFT)
         button1.pack(side=tk.LEFT)
         button3.pack(side=tk.LEFT)
-
-        if len(self.filenames) != 0:
-            self.img = mpimg.imread(self.filenames[0])
-            self.a.imshow(self.img)
 
         self.agg = FigureCanvasTkAgg(self.f, self)
         self.agg.mpl_connect(BTNPRESS_EVENT_NAME, self.on_click)
@@ -97,12 +98,17 @@ class DataLabeler(tk.Tk):
             self.clicked_points.append((event.xdata, event.ydata))
 
             if self.click_count == 2:
+                # remove the temp overlay rect created for mouse movement feedback
                 if self.temp_rect is not None:
                     self.temp_rect.remove()
                     self.temp_rect = None
+
+                # sort from left to right
                 if self.clicked_points[0][0] > self.clicked_points[1][0]:
                     self.clicked_points = [
                         self.clicked_points[1], self.clicked_points[0]]
+
+                # store the obtained rect in the global state
                 self.image_points[self.filenames[self.filePointer]] = list(
                     self.clicked_points)
                 self.point_plot.remove()
@@ -176,7 +182,7 @@ class DataLabeler(tk.Tk):
 
     def onLoadImages(self):
         filenames = []
-        for root, directories, files in os.walk(os.path.join(os.path.dirname(sys.argv[0]), IMAGE_DIR)):
+        for root, _, files in os.walk(os.path.join(os.path.dirname(sys.argv[0]), IMAGE_DIR)):
             if files is not None:
                 for f in files:
                     filenames.append(f'{root}/{f}')
