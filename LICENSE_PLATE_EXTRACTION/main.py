@@ -14,17 +14,84 @@ import sys
 from tkinter import ttk, filedialog
 import copy
 
+# Constants
+PAGE_TITLE = "Data Labeler"
+FIG_SIZE = (10, 10)
+DPI = 200
+LOAD_BTN_TEXT = "Load Images"
+PREV_BTN_TEXT = "Previous"
+NEXT_BTN_TEXT = "Next"
+RECT_FACE_COLOR = (1, 1, 1, 0)
+RECT_EDGE_COLOR = "r"
+LINE_WIDTH = 1
+POINT_SIZE = 2
+KEYCODE_ESCAPE = "escape"
+BTNPRESS_EVENT_NAME = "button_press_event"
+KEYPRESS_EVENT_NAME = "key_press_event"
+MOUSEMOVE_EVENT_NAME = "motion_notify_event"
+LARGE_FONT = ("Verdana", 12)
+IMAGE_DIR = "images"
 
 matplotlib.use("TkAgg")
-LARGE_FONT = ("Verdana", 12)
 matplotlib.interactive(True)
 
 
 class DataLabeler(tk.Tk):
-    def onclick(self, event):
-        self.agg._tkcanvas.focus_force()
+    """
+    The main application class.
+    """
 
-        print(event.x, event.y, event.xdata, event.ydata)
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        tk.Tk.wm_title(self, PAGE_TITLE)
+        self.filenames = []
+        self.clicked_points = []
+        self.click_count = 0
+        self.point_plot = None
+        self.image_points = dict()
+        self.rect = None
+        self.temp_rect = None
+        self.img = None
+        self.f = Figure(figsize=FIG_SIZE, dpi=DPI)
+        self.a = self.f.add_subplot(111)
+        self.a.autoscale(tight=True)
+        self.filePointer = 0
+        topFrame = tk.Frame(self)
+        topFrame.pack()
+
+        button1 = ttk.Button(topFrame, text=LOAD_BTN_TEXT,
+                             command=lambda: self.onLoadImages())
+        button2 = ttk.Button(topFrame, text=PREV_BTN_TEXT,
+                             command=lambda: self.onPrevious())
+        button3 = ttk.Button(topFrame, text=NEXT_BTN_TEXT,
+                             command=lambda: self.onNext())
+
+        button2.pack(side=tk.LEFT)
+        button1.pack(side=tk.LEFT)
+        button3.pack(side=tk.LEFT)
+
+        if len(self.filenames) != 0:
+            self.img = mpimg.imread(self.filenames[0])
+            self.a.imshow(self.img)
+
+        self.agg = FigureCanvasTkAgg(self.f, self)
+        self.agg.mpl_connect(BTNPRESS_EVENT_NAME, self.on_click)
+        self.agg.mpl_connect(KEYPRESS_EVENT_NAME, self.on_undo)
+        self.agg.mpl_connect(MOUSEMOVE_EVENT_NAME, self.on_move)
+        self.agg.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+        toolbar = NavigationToolbar2Tk(self.agg, self)
+        toolbar.update()
+        self.agg._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        self.agg._tkcanvas.focus_force()
+        print(self.focus_displayof())
+
+    def on_click(self, event):
+        """
+        The click handler for the matplotlib canvas element
+        """
+        self.agg._tkcanvas.focus_force()  # needed to enable keypress detection
         if event.xdata is not None and event.ydata is not None:
             self.click_count += 1
             self.clicked_points.append((event.xdata, event.ydata))
@@ -42,8 +109,8 @@ class DataLabeler(tk.Tk):
                 self.rect = patches.Rectangle(tuple(self.clicked_points[0]),
                                               self.clicked_points[1][0] -
                                               self.clicked_points[0][0],
-                                              self.clicked_points[1][1] - self.clicked_points[0][1], edgecolor='r',
-                                              facecolor=(1, 1, 1, 0), linewidth=1)
+                                              self.clicked_points[1][1] - self.clicked_points[0][1], edgecolor=RECT_EDGE_COLOR,
+                                              facecolor=RECT_FACE_COLOR, linewidth=LINE_WIDTH)
                 self.a.add_patch(self.rect)
                 self.point_plot = None
 
@@ -61,11 +128,11 @@ class DataLabeler(tk.Tk):
                     self.point_plot = None
                 gc.collect()
                 self.point_plot = self.a.scatter(
-                    [event.xdata], [event.ydata], c='r', s=2)
+                    [event.xdata], [event.ydata], c=RECT_EDGE_COLOR, s=POINT_SIZE)
                 self._refreshImage()
                 self.agg.draw()
 
-    def onMove(self, event):
+    def on_move(self, event):
 
         if self.click_count != 1:
             return
@@ -78,18 +145,18 @@ class DataLabeler(tk.Tk):
             self.clicked_points[0]),
             event.xdata-self.clicked_points[0][0],
             event.ydata-self.clicked_points[0][1],
-            facecolor=(1, 1, 1, 0),
-            edgecolor='r',
-            linewidth=1)
+            facecolor=RECT_FACE_COLOR,
+            edgecolor=RECT_EDGE_COLOR,
+            linewidth=LINE_WIDTH)
 
         self.a.add_patch(self.temp_rect)
         self.agg.draw()
 
-    def onUndo(self, event):
+    def on_undo(self, event):
         sys.stdin.flush()
         print(event.key)
 
-        if event.key == 'escape':
+        if event.key == KEYCODE_ESCAPE:
 
             self.click_count = 0
             self.clicked_points = []
@@ -109,7 +176,7 @@ class DataLabeler(tk.Tk):
 
     def onLoadImages(self):
         filenames = []
-        for root, directories, files in os.walk(os.path.join(os.path.dirname(sys.argv[0]), 'images')):
+        for root, directories, files in os.walk(os.path.join(os.path.dirname(sys.argv[0]), IMAGE_DIR)):
             if files is not None:
                 for f in files:
                     filenames.append(f'{root}/{f}')
@@ -170,52 +237,6 @@ class DataLabeler(tk.Tk):
             if self.rect is not None:
                 self.rect.set_visible(False)
             self._refreshImage()
-
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
-        tk.Tk.wm_title(self, "Data Labeler")
-        self.filenames = []
-        self.clicked_points = []
-        self.click_count = 0
-        self.point_plot = None
-        self.image_points = dict()
-        self.rect = None
-        self.temp_rect = None
-        self.img = None
-        self.f = Figure(figsize=(10, 10), dpi=200)
-        self.a = self.f.add_subplot(111)
-        self.a.autoscale(tight=True)
-        self.filePointer = 0
-        topFrame = tk.Frame(self)
-        topFrame.pack()
-
-        button1 = ttk.Button(topFrame, text="Load Images",
-                             command=lambda: self.onLoadImages())
-        button2 = ttk.Button(topFrame, text="Previous",
-                             command=lambda: self.onPrevious())
-        button3 = ttk.Button(topFrame, text="Next",
-                             command=lambda: self.onNext())
-
-        button2.pack(side=tk.LEFT)
-        button1.pack(side=tk.LEFT)
-        button3.pack(side=tk.LEFT)
-
-        if len(self.filenames) != 0:
-            self.img = mpimg.imread(self.filenames[0])
-            self.a.imshow(self.img)
-
-        self.agg = FigureCanvasTkAgg(self.f, self)
-        self.agg.mpl_connect('button_press_event', self.onclick)
-        self.agg.mpl_connect('key_press_event', self.onUndo)
-        self.agg.mpl_connect('motion_notify_event', self.onMove)
-        self.agg.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-
-        toolbar = NavigationToolbar2Tk(self.agg, self)
-        toolbar.update()
-        self.agg._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-
-        self.agg._tkcanvas.focus_force()
-        print(self.focus_displayof())
 
 
 app = DataLabeler()
