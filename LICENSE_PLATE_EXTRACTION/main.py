@@ -8,18 +8,20 @@ import matplotlib.image as mpimg
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import tkinter as tk
+import os
+import sys
 from tkinter import ttk, filedialog
 
 matplotlib.use("TkAgg")
 LARGE_FONT = ("Verdana", 12)
 matplotlib.interactive(True)
 
+
 class SeaofBTCapp(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        tk.Tk.iconbitmap(self, default="bird.jpg")
         tk.Tk.wm_title(self, "Data Labeler")
 
         container = tk.Frame(self)
@@ -28,7 +30,6 @@ class SeaofBTCapp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-
 
         frame = PageThree(container, self)
 
@@ -43,9 +44,10 @@ class SeaofBTCapp(tk.Tk):
         frame.tkraise()
 
 
-
 class PageThree(tk.Frame):
-    def onclick(self,event):
+    def onclick(self, event):
+        self._nametowidget(self.winfo_parent()).focus()
+
         print(event.x, event.y, event.xdata, event.ydata)
         if event.xdata is not None and event.ydata is not None:
             self.click_count += 1
@@ -53,13 +55,16 @@ class PageThree(tk.Frame):
 
             if self.click_count == 2:
                 if self.clicked_points[0][0] > self.clicked_points[1][0]:
-                    self.clicked_points = [self.clicked_points[1], self.clicked_points[0]]
-                self.image_points[self.filenames[self.filePointer]] = list(self.clicked_points)
+                    self.clicked_points = [
+                        self.clicked_points[1], self.clicked_points[0]]
+                self.image_points[self.filenames[self.filePointer]] = list(
+                    self.clicked_points)
                 self.point_plot.remove()
                 self.rect = patches.Rectangle(tuple(self.clicked_points[0]),
-                                                   self.clicked_points[1][0] - self.clicked_points[0][0],
-                                                   self.clicked_points[1][1] - self.clicked_points[0][1], edgecolor='r',
-                                                   facecolor=(1, 1, 1, 0), linewidth=1)
+                                              self.clicked_points[1][0] -
+                                              self.clicked_points[0][0],
+                                              self.clicked_points[1][1] - self.clicked_points[0][1], edgecolor='r',
+                                              facecolor=(1, 1, 1, 0), linewidth=1)
                 self.a.add_patch(self.rect)
                 self.point_plot = None
 
@@ -76,13 +81,36 @@ class PageThree(tk.Frame):
                 if self.point_plot is not None:
                     self.point_plot = None
                 gc.collect()
-                self.point_plot = self.a.scatter([event.xdata], [event.ydata],c='r',s=2)
+                self.point_plot = self.a.scatter(
+                    [event.xdata], [event.ydata], c='r', s=2)
                 self._refreshImage()
                 self.agg.draw()
 
-    def onSelectImages(self):
-        filenames = list(filedialog.askopenfilenames(initialdir="/", title="Select file",
-                                                         filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*"))))
+    def onUndo(self, event):
+        sys.stdin.flush()
+        print(event.key)
+
+        if event.key == 'escape':
+            print('hey')
+            self.click_count = 0
+            self.clicked_points = []
+
+            if self.rect is not None:
+                self.rect.remove()
+                self.rect = None
+            if self.point_plot is not None:
+                self.point_plot.remove()
+                self.point_plot = None
+            gc.collect()
+            # self._refreshImage()
+            self.agg.draw()
+
+    def onLoadImages(self):
+        filenames = []
+        for root, directories, files in os.walk('./images'):
+            if files is not None:
+                for f in files:
+                    filenames.append(f'{root}/{f}')
 
         if len(filenames) != 0:
             if len(self.filenames) == 0:
@@ -95,10 +123,10 @@ class PageThree(tk.Frame):
 
     def _save(self):
         if self.image_points is not None and len(self.image_points) > 0:
-            with open('data.json',"w+") as dataFile:
+            with open('data.json', "w+") as dataFile:
                 dataFile.write(json.dumps(self.image_points))
 
-            with open('data.xml','w+') as dataFileX:
+            with open('data.xml', 'w+') as dataFileX:
                 dataFileX.write(str(dicttoxml(self.image_points)))
 
     def _refreshImage(self):
@@ -110,7 +138,7 @@ class PageThree(tk.Frame):
 
                 del self.img
                 self.img = None
-                gc.collect() # for efficiency
+                gc.collect()  # for efficiency
             self.img = mpimg.imread(self.filenames[self.filePointer])
         except Exception as e:
             print(e)
@@ -134,9 +162,9 @@ class PageThree(tk.Frame):
                 self.rect.set_visible(False)
             self._refreshImage()
 
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+
         label = tk.Label(self, text="Labeling UI", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
         self.filenames = []
@@ -153,8 +181,8 @@ class PageThree(tk.Frame):
         topFrame = tk.Frame(self)
         topFrame.pack()
 
-        button1 = ttk.Button(topFrame, text="Select Images",
-                             command=lambda: self.onSelectImages())
+        button1 = ttk.Button(topFrame, text="Load Images",
+                             command=lambda: self.onLoadImages())
         button2 = ttk.Button(topFrame, text="Previous",
                              command=lambda: self.onPrevious())
         button3 = ttk.Button(topFrame, text="Next",
@@ -164,13 +192,14 @@ class PageThree(tk.Frame):
         button1.pack(side=tk.LEFT)
         button3.pack(side=tk.LEFT)
 
-
         if len(self.filenames) != 0:
             self.img = mpimg.imread(self.filenames[0])
             self.a.imshow(self.img)
 
         self.agg = FigureCanvasTkAgg(self.f, self)
         self.agg.mpl_connect('button_press_event', self.onclick)
+        self.agg.mpl_connect('key_press_event', self.onUndo)
+
         self.agg.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         toolbar = NavigationToolbar2Tk(self.agg, self)
@@ -181,7 +210,3 @@ class PageThree(tk.Frame):
 app = SeaofBTCapp()
 
 app.mainloop()
-
-
-
-
