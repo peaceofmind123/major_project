@@ -7,6 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 import matplotlib.image as mpimg
 import matplotlib.patches as patches
+import matplotlib.lines as lines
 import matplotlib.pyplot as plt
 import tkinter as tk
 import os
@@ -43,18 +44,12 @@ class DataLabeler(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-
         tk.Tk.wm_title(self, PAGE_TITLE)
-
-        # Global state variables
-
         self.filenames = []
-        # the buffer that holds coords of points clicked on the current image
         self.clicked_points = []
-        self.click_count = 0  # counts clicks: (mod 3)
-        self.point_plot = None  # stores coord of point clicked when click_count == 0
-        self.image_points = dict()  # top level
-        self.rect = None
+        self.click_count = 0
+        self.point_plot = None
+        self.image_points = dict()
         self.temp_rect = None
         self.img = None
         self.f = Figure(figsize=FIG_SIZE, dpi=DPI)
@@ -75,9 +70,13 @@ class DataLabeler(tk.Tk):
         button1.pack(side=tk.LEFT)
         button3.pack(side=tk.LEFT)
 
+        if len(self.filenames) != 0:
+            self.img = mpimg.imread(self.filenames[0])
+            self.a.imshow(self.img)
+
         self.agg = FigureCanvasTkAgg(self.f, self)
         self.agg.mpl_connect(BTNPRESS_EVENT_NAME, self.on_click)
-        self.agg.mpl_connect(KEYPRESS_EVENT_NAME, self.on_undo)
+        self.agg.mpl_connect(KEYPRESS_EVENT_NAME, self.on_keypress)
         self.agg.mpl_connect(MOUSEMOVE_EVENT_NAME, self.on_move)
         self.agg.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
@@ -97,92 +96,89 @@ class DataLabeler(tk.Tk):
             self.click_count += 1
             self.clicked_points.append((event.xdata, event.ydata))
 
-            if self.click_count == 2:
-                # remove the temp overlay rect created for mouse movement feedback
-                if self.temp_rect is not None:
-                    self.temp_rect.remove()
-                    self.temp_rect = None
-
-                # sort from left to right
-                if self.clicked_points[0][0] > self.clicked_points[1][0]:
-                    self.clicked_points = [
-                        self.clicked_points[1], self.clicked_points[0]]
-
-                # store the obtained rect in the global state
-                self.image_points[self.filenames[self.filePointer]] = list(
-                    self.clicked_points)
-                self.point_plot.remove()
-                self.rect = patches.Rectangle(tuple(self.clicked_points[0]),
-                                              self.clicked_points[1][0] -
-                                              self.clicked_points[0][0],
-                                              self.clicked_points[1][1] - self.clicked_points[0][1], edgecolor=RECT_EDGE_COLOR,
-                                              facecolor=RECT_FACE_COLOR, linewidth=LINE_WIDTH)
-                self.a.add_patch(self.rect)
-                self.point_plot = None
-
+            if self.click_count == 3:
                 self.click_count = 0
+                self._clear_all_plots()
+                
+                self.image_points[self.filenames[self.filePointer]] = list(self.clicked_points)
+                cps= self.clicked_points
+                xdata=[cps[0][0], cps[1][0], event.xdata, cps[0][0]-(cps[1][0] - event.xdata),cps[0][0]]
+                ydata=[cps[0][1], cps[1][1], event.ydata, cps[0][1]-(cps[1][1] - event.ydata),cps[0][1]]
+                self.temp_rect = self.a.plot(xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
                 self.clicked_points = []
-                self.agg.draw()
-                print(self.image_points)
-                self._save()
+                self._save()              
+                print('third point registered successfully', self.filePointer)
+
+            elif self.click_count == 2:
+                self._clear_all_plots()
+
+                xdata=[self.clicked_points[0][0], event.xdata]
+                ydata=[self.clicked_points[0][1], event.ydata]
+                self.temp_rect = self.a.plot(xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
+                print('second point registered successfully', self.filePointer)
 
             elif self.click_count == 1:
-                if self.rect is not None:
-                    self.rect.remove()
-                    self.rect = None
-                if self.point_plot is not None:
-                    self.point_plot = None
+                self._clear_all_plots()
                 gc.collect()
                 self.point_plot = self.a.scatter(
                     [event.xdata], [event.ydata], c=RECT_EDGE_COLOR, s=POINT_SIZE)
-                self._refreshImage()
-                self.agg.draw()
+                print('first point registered successfully', self.filePointer)
+            
+            # self._refreshImage()
+            self.agg.draw()
+
+    def _clear_all_plots(self):
+        if self.temp_rect is not None:
+            for tr in self.temp_rect:tr.remove()
+            self.temp_rect = None
+        if self.point_plot is not None:
+            self.point_plot.remove()
+            self.point_plot = None
 
     def on_move(self, event):
 
-        if self.click_count != 1:
+        if self.click_count == 0:
             return
+        
+        if self.click_count == 1:
+            self._clear_all_plots()
 
-        if self.temp_rect is not None:
-            self.temp_rect.remove()
-            self.temp_rect = None
+            xdata=[self.clicked_points[0][0], event.xdata]
+            ydata=[self.clicked_points[0][1], event.ydata]
+            self.temp_rect = self.a.plot(xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
+        
+        elif self.click_count == 2:
+            self._clear_all_plots()
 
-        self.temp_rect = patches.Rectangle(tuple(
-            self.clicked_points[0]),
-            event.xdata-self.clicked_points[0][0],
-            event.ydata-self.clicked_points[0][1],
-            facecolor=RECT_FACE_COLOR,
-            edgecolor=RECT_EDGE_COLOR,
-            linewidth=LINE_WIDTH)
-
-        self.a.add_patch(self.temp_rect)
+            cps= self.clicked_points
+            xdata=[cps[0][0], cps[1][0], event.xdata, cps[0][0]-(cps[1][0] - event.xdata),cps[0][0]]
+            ydata=[cps[0][1], cps[1][1], event.ydata, cps[0][1]-(cps[1][1] - event.ydata),cps[0][1]]
+            self.temp_rect = self.a.plot(xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
+        
+        # self._refreshImage()
         self.agg.draw()
 
-    def on_undo(self, event):
+
+    def on_keypress(self, event):
         sys.stdin.flush()
         print(event.key)
-
         if event.key == KEYCODE_ESCAPE:
-
+            print('Clearing the clicked points')
             self.click_count = 0
             self.clicked_points = []
 
-            if self.rect is not None:
-                self.rect.remove()
-                self.rect = None
-            if self.temp_rect is not None:
-                self.temp_rect.remove()
-                self.temp_rect = None
-            if self.point_plot is not None:
-                self.point_plot.remove()
-                self.point_plot = None
+            self._clear_all_plots()
             gc.collect()
-
             self.agg.draw()
+
+        elif str(event.key).lower() == 'd':
+            self.onNext()
+        elif str(event.key).lower() == 'a':
+            self.onPrevious()
 
     def onLoadImages(self):
         filenames = []
-        for root, _, files in os.walk(os.path.join(os.path.dirname(sys.argv[0]), IMAGE_DIR)):
+        for root, directories, files in os.walk(os.path.join(os.path.dirname(sys.argv[0]), IMAGE_DIR)):
             if files is not None:
                 for f in files:
                     filenames.append(f'{root}/{f}')
@@ -227,24 +223,22 @@ class DataLabeler(tk.Tk):
             return
 
         self.a.imshow(self.img, cmap='gray')
-
         self.agg.draw()
 
     def onPrevious(self):
         if self.filePointer > 0:
             self.filePointer -= 1
-            if self.rect is not None:
-                self.rect.set_visible(False)
+            self._clear_all_plots()
+            self.a.clear()
             self._refreshImage()
 
     def onNext(self):
         if self.filePointer < len(self.filenames)-1:
             self.filePointer += 1
-            if self.rect is not None:
-                self.rect.set_visible(False)
+            self._clear_all_plots()
+            self.a.clear()
             self._refreshImage()
 
 
 app = DataLabeler()
-
 app.mainloop()
