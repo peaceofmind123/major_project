@@ -31,7 +31,7 @@ BTNPRESS_EVENT_NAME = "button_press_event"
 KEYPRESS_EVENT_NAME = "key_press_event"
 MOUSEMOVE_EVENT_NAME = "motion_notify_event"
 LARGE_FONT = ("Verdana", 12)
-IMAGE_DIR = "images"
+IMAGE_DIR = "ashish"
 
 matplotlib.use("TkAgg")
 matplotlib.interactive(True)
@@ -99,22 +99,27 @@ class DataLabeler(tk.Tk):
             if self.click_count == 3:
                 self.click_count = 0
                 self._clear_all_plots()
-                
-                self.image_points[self.filenames[self.filePointer]] = list(self.clicked_points)
-                cps= self.clicked_points
-                xdata=[cps[0][0], cps[1][0], event.xdata, cps[0][0]-(cps[1][0] - event.xdata),cps[0][0]]
-                ydata=[cps[0][1], cps[1][1], event.ydata, cps[0][1]-(cps[1][1] - event.ydata),cps[0][1]]
-                self.temp_rect = self.a.plot(xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
+
+                self.image_points[self.filenames[self.filePointer]] = list(
+                    self.clicked_points)
+                cps = self.clicked_points
+                xdata = [cps[0][0], cps[1][0], event.xdata, cps[0]
+                         [0]-(cps[1][0] - event.xdata), cps[0][0]]
+                ydata = [cps[0][1], cps[1][1], event.ydata, cps[0]
+                         [1]-(cps[1][1] - event.ydata), cps[0][1]]
+                self.temp_rect = self.a.plot(
+                    xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
                 self.clicked_points = []
-                self._save()              
+                self._save()
                 print('third point registered successfully', self.filePointer)
 
             elif self.click_count == 2:
                 self._clear_all_plots()
 
-                xdata=[self.clicked_points[0][0], event.xdata]
-                ydata=[self.clicked_points[0][1], event.ydata]
-                self.temp_rect = self.a.plot(xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
+                xdata = [self.clicked_points[0][0], event.xdata]
+                ydata = [self.clicked_points[0][1], event.ydata]
+                self.temp_rect = self.a.plot(
+                    xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
                 print('second point registered successfully', self.filePointer)
 
             elif self.click_count == 1:
@@ -123,13 +128,14 @@ class DataLabeler(tk.Tk):
                 self.point_plot = self.a.scatter(
                     [event.xdata], [event.ydata], c=RECT_EDGE_COLOR, s=POINT_SIZE)
                 print('first point registered successfully', self.filePointer)
-            
+
             # self._refreshImage()
             self.agg.draw()
 
     def _clear_all_plots(self):
         if self.temp_rect is not None:
-            for tr in self.temp_rect:tr.remove()
+            for tr in self.temp_rect:
+                tr.remove()
             self.temp_rect = None
         if self.point_plot is not None:
             self.point_plot.remove()
@@ -139,25 +145,28 @@ class DataLabeler(tk.Tk):
 
         if self.click_count == 0:
             return
-        
+
         if self.click_count == 1:
             self._clear_all_plots()
 
-            xdata=[self.clicked_points[0][0], event.xdata]
-            ydata=[self.clicked_points[0][1], event.ydata]
-            self.temp_rect = self.a.plot(xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
-        
+            xdata = [self.clicked_points[0][0], event.xdata]
+            ydata = [self.clicked_points[0][1], event.ydata]
+            self.temp_rect = self.a.plot(
+                xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
+
         elif self.click_count == 2:
             self._clear_all_plots()
 
-            cps= self.clicked_points
-            xdata=[cps[0][0], cps[1][0], event.xdata, cps[0][0]-(cps[1][0] - event.xdata),cps[0][0]]
-            ydata=[cps[0][1], cps[1][1], event.ydata, cps[0][1]-(cps[1][1] - event.ydata),cps[0][1]]
-            self.temp_rect = self.a.plot(xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
-        
+            cps = self.clicked_points
+            xdata = [cps[0][0], cps[1][0], event.xdata, cps[0]
+                     [0]-(cps[1][0] - event.xdata), cps[0][0]]
+            ydata = [cps[0][1], cps[1][1], event.ydata, cps[0]
+                     [1]-(cps[1][1] - event.ydata), cps[0][1]]
+            self.temp_rect = self.a.plot(
+                xdata, ydata, lw=LINE_WIDTH, color=RECT_EDGE_COLOR)
+
         # self._refreshImage()
         self.agg.draw()
-
 
     def on_keypress(self, event):
         sys.stdin.flush()
@@ -178,9 +187,16 @@ class DataLabeler(tk.Tk):
 
     def onLoadImages(self):
         filenames = []
+        with open('data.json', 'r') as dataFile:
+            jsonData = json.load(dataFile)
+
         for root, directories, files in os.walk(os.path.join(os.path.dirname(sys.argv[0]), IMAGE_DIR)):
             if files is not None:
-                for f in files:
+                files_set = set(files)
+                jsonData_set = set([name.split('/')[1] for name in jsonData])
+
+                to_load = files_set.difference(jsonData_set)
+                for f in to_load:
                     filenames.append(f'{root}/{f}')
 
         if len(filenames) != 0:
