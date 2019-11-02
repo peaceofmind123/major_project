@@ -23,7 +23,7 @@
     "npm": "6.9.0",
     "pg": "7.10.0",
     "pg-hstore": "2.3.2",
-    "sequelize": "5.6.1"
+    "sequelize": "5.15.1"
   },
   "nodemonConfig": {
     "restartable": "rs",
